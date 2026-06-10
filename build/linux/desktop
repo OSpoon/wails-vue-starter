@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=Wails Vue Starter
+Comment=A wails-vue-starter application
+# The Exec line includes %u to pass the URL to the application
+Exec=/usr/local/bin/wails-vue-starter %u
+Terminal=false
+Type=Application
+Icon=wails-vue-starter
+Categories=Utility;
+StartupWMClass=wails-vue-starter
+
+ 

@@ -1,0 +1,15 @@
+{
+	"fixed": {
+		"file_version": "0.1.0"
+	},
+	"info": {
+		"0000": {
+			"ProductVersion": "0.1.0",
+			"CompanyName": "OSpoon",
+			"FileDescription": "A wails-vue-starter application",
+			"LegalCopyright": "© 2026, OSpoon",
+			"ProductName": "Wails Vue Starter",
+			"Comments": "A Wails3 + Vue 3 + TypeScript starter template"
+		}
+	}
+}

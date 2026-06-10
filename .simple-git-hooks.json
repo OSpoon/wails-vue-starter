@@ -1,0 +1,4 @@
+{
+  "preserveUnused": true,
+  "pre-commit": "cd frontend && pnpm lint-staged"
+}
