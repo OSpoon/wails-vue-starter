@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import AppSidebar from '@/components/AppSidebar.vue'
 import SiteHeader from '@/components/SiteHeader.vue'
+import { usePersistedWindowState } from '@/composables/usePersistedWindowState'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
+import { Toaster } from '@/components/ui/sonner'
+
+usePersistedWindowState()
 </script>
 
 <template>
@@ -19,5 +23,6 @@ import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
         <router-view />
       </div>
     </SidebarInset>
+    <Toaster rich-colors close-button />
   </SidebarProvider>
 </template>

@@ -3,6 +3,8 @@ import { createPinia } from 'pinia'
 import router from './router'
 import App from './App.vue'
 import './style.css'
+import 'vue-sonner/style.css'
+import '../bindings/github.com/wailsapp/wails/v3/internal/eventcreate'
 
 const app = createApp(App)
 app.use(createPinia())

@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import type { RouteRecordRaw, RouteMeta } from 'vue-router'
-import { IconDashboard, IconHome2 } from '@tabler/icons-vue'
+import { IconDashboard, IconHome2, IconStack2 } from '@tabler/icons-vue'
 import type { Component } from 'vue'
 
 declare module 'vue-router' {
@@ -23,6 +23,12 @@ const routes: RouteRecordRaw[] = [
     name: 'dashboard',
     meta: { title: 'Dashboard', icon: IconDashboard, nav: 'main' } satisfies RouteMeta,
     component: () => import('@/pages/DashboardPage.vue'),
+  },
+  {
+    path: '/foundation',
+    name: 'foundation',
+    meta: { title: 'Foundation', icon: IconStack2, nav: 'main' } satisfies RouteMeta,
+    component: () => import('@/pages/FoundationPage.vue'),
   },
 ]
 

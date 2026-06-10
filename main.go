@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"embed"
 
 	"log"
@@ -18,6 +19,7 @@ import (
 var assets embed.FS
 
 func init() {
+	application.RegisterEvent[AppInfo]("app:ready")
 	// Register a custom event whose associated data type is string.
 	// This is not required, but the binding generator will pick up registered events
 	// and provide a strongly typed JS/TS API for them.
@@ -35,11 +37,9 @@ func main() {
 	// 'Bind' is a list of Go struct instances. The frontend has access to the methods of these instances.
 	// 'Mac' options tailor the application when running an macOS.
 	app := application.New(application.Options{
-		Name:        "wails-vue-starter",
-		Description: "A Wails3 + Vue 3 + TypeScript starter template",
-		Services: []application.Service{
-			application.NewService(&GreetService{}),
-		},
+		Name:         appName,
+		Description:  appDescription,
+		MarshalError: marshalAppError,
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
 		},
@@ -48,15 +48,29 @@ func main() {
 		},
 	})
 
+	info := AppInfo{
+		Name:              appName,
+		DisplayName:       appDisplayName,
+		Description:       appDescription,
+		Version:           appVersion,
+		ProductIdentifier: appProductIdentifier,
+		Author:            appAuthor,
+		TitlebarHeight:    titlebarHeight,
+	}
+
+	app.RegisterService(application.NewService(NewAppService(app, info)))
+	app.RegisterService(application.NewService(NewPreferenceService()))
+	app.RegisterService(application.NewService(&GreetService{}))
+
 	// Create a new window with the necessary options.
 	// 'Title' is the title of the window.
 	// 'Mac' options tailor the window when running on macOS.
 	// 'BackgroundColour' is the background colour of the window.
 	// 'URL' is the URL that will be loaded into the webview.
 	app.Window.NewWithOptions(application.WebviewWindowOptions{
-		Title: "Wails Vue Starter",
+		Title: appDisplayName,
 		Mac: application.MacWindow{
-			InvisibleTitleBarHeight: 50,
+			InvisibleTitleBarHeight: titlebarHeight,
 			Backdrop:                application.MacBackdropTranslucent,
 			TitleBar:                application.MacTitleBarHiddenInset,
 		},
@@ -66,13 +80,19 @@ func main() {
 
 	// Create a goroutine that emits an event containing the current time every second.
 	// The frontend can listen to this event and update the UI accordingly.
-	go func() {
+	go func(ctx context.Context) {
+		ticker := time.NewTicker(time.Second)
+		defer ticker.Stop()
+
 		for {
-			now := time.Now().Format(time.RFC1123)
-			app.Event.Emit("time", now)
-			time.Sleep(time.Second)
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				app.Event.Emit("time", time.Now().Format(time.RFC1123))
+			}
 		}
-	}()
+	}(app.Context())
 
 	// Run the application. This blocks until the application has been exited.
 	err := app.Run()
