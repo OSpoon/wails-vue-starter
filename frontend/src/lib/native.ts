@@ -1,4 +1,4 @@
-import { Browser, Clipboard, Dialogs, Window } from '@wailsio/runtime'
+import { Browser, Clipboard, Dialogs, Screens, System, Window } from '@wailsio/runtime'
 
 export const nativeBrowser = {
   openURL: (url: string | URL) => Browser.OpenURL(url),
@@ -18,4 +18,6 @@ export const nativeDialog = {
   saveFile: Dialogs.SaveFile,
 }
 
+export const nativeScreens = Screens
+export const nativeSystem = System
 export const nativeWindow = Window

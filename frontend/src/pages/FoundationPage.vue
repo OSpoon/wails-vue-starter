@@ -6,11 +6,14 @@ import {
   IconBell,
   IconBrandGithub,
   IconClipboard,
+  IconDeviceDesktop,
+  IconFileExport,
+  IconFolderOpen,
+  IconPin,
   IconRefresh,
   IconSend,
   IconWindow,
 } from '@tabler/icons-vue'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -37,7 +40,13 @@ import { useAppInfo } from '@/composables/useAppInfo'
 import { normalizeError, useAsyncAction } from '@/composables/useAsyncAction'
 import { usePreferences } from '@/composables/usePreferences'
 import { useWailsEvent } from '@/composables/useWailsEvent'
-import { nativeClipboard, nativeDialog, nativeWindow } from '@/lib/native'
+import {
+  nativeClipboard,
+  nativeDialog,
+  nativeScreens,
+  nativeSystem,
+  nativeWindow,
+} from '@/lib/native'
 import { AppService, PreferenceService } from '../../bindings/github.com/OSpoon/wails-vue-starter'
 
 interface WindowSnapshot {
@@ -60,10 +69,11 @@ interface NotificationInteraction {
   error?: string
 }
 
-interface NotificationAuthorization {
-  allowed: boolean
-  platform: string
-  message: string
+interface ScreenSummary {
+  name: string
+  width: number
+  height: number
+  scaleFactor: number
 }
 
 const { appInfo, environment, refresh: refreshAppInfo } = useAppInfo()
@@ -76,13 +86,21 @@ const {
 const action = useAsyncAction()
 const clipboardText = ref('Wails Vue Starter')
 const clipboardReadback = ref('')
+const selectedPath = ref('')
+const savePath = ref('')
+const dialogAnswer = ref('')
 const eventLog = ref<string[]>([])
 const windowSnapshot = ref<WindowSnapshot | null>(null)
-const notificationAuthorization = ref<NotificationAuthorization | null>(null)
+const notificationPermission = ref<boolean | null>(null)
 const notificationTitle = ref('Wails Vue Starter')
 const notificationSubtitle = ref('Foundation check')
 const notificationBody = ref('System notifications are wired through the Wails runtime.')
 const notificationResult = ref<NotificationInteraction | null>(null)
+const alwaysOnTop = ref(false)
+const systemDarkMode = ref<boolean | null>(null)
+const screenCount = ref<number | null>(null)
+const primaryScreen = ref<ScreenSummary | null>(null)
+const systemCapabilities = ref<Record<string, unknown> | null>(null)
 
 const preferenceValues = computed(() => preferences.value?.values ?? {})
 const themePreference = computed({
@@ -121,6 +139,7 @@ async function refreshAll() {
     refreshPreferences(),
     refreshWindowSnapshot(),
     refreshNotificationAuthorization(),
+    refreshSystemSnapshot(),
   ])
 }
 
@@ -140,7 +159,25 @@ async function refreshWindowSnapshot() {
 }
 
 async function refreshNotificationAuthorization() {
-  notificationAuthorization.value = await AppService.CheckNotificationAuthorization()
+  notificationPermission.value = await AppService.CheckNotificationAuthorization()
+}
+
+async function refreshSystemSnapshot() {
+  const [darkMode, screens, primary, capabilities] = await Promise.all([
+    nativeSystem.IsDarkMode(),
+    nativeScreens.GetAll(),
+    nativeScreens.GetPrimary(),
+    nativeSystem.Capabilities(),
+  ])
+  systemDarkMode.value = darkMode
+  screenCount.value = screens.length
+  primaryScreen.value = {
+    name: primary.Name,
+    width: primary.Size.Width,
+    height: primary.Size.Height,
+    scaleFactor: primary.ScaleFactor,
+  }
+  systemCapabilities.value = capabilities
 }
 
 function openRepository() {
@@ -169,9 +206,46 @@ function showDialog() {
   )
 }
 
+function askQuestion() {
+  action.run(async () => {
+    dialogAnswer.value = await nativeDialog.question({
+      Title: 'Question Dialog',
+      Message: 'This is a native question dialog example.',
+      Buttons: [
+        { Label: 'Continue', IsDefault: true },
+        { Label: 'Cancel', IsCancel: true },
+      ],
+    })
+  })
+}
+
+function openFile() {
+  action.run(async () => {
+    const result = await nativeDialog.openFile({
+      Title: 'Open File',
+      Message: 'Pick a file to test the native file picker.',
+      ButtonText: 'Open',
+      CanChooseFiles: true,
+      AllowsMultipleSelection: false,
+    })
+    selectedPath.value = result
+  })
+}
+
+function chooseSavePath() {
+  action.run(async () => {
+    savePath.value = await nativeDialog.saveFile({
+      Title: 'Save File',
+      Message: 'Choose a destination path.',
+      ButtonText: 'Choose',
+      Filename: 'wails-vue-starter.txt',
+    })
+  })
+}
+
 function requestNotificationAuthorization() {
   action.run(async () => {
-    notificationAuthorization.value = await AppService.RequestNotificationAuthorization()
+    notificationPermission.value = await AppService.RequestNotificationAuthorization()
   })
 }
 
@@ -186,6 +260,42 @@ function sendNotification() {
     toast.success('Notification sent')
     await refreshNotificationAuthorization()
   })
+}
+
+function centerWindow() {
+  action.run(async () => {
+    await nativeWindow.Center()
+    await refreshWindowSnapshot()
+  })
+}
+
+function toggleMaximiseWindow() {
+  action.run(async () => {
+    await nativeWindow.ToggleMaximise()
+    await refreshWindowSnapshot()
+  })
+}
+
+function restoreWindow() {
+  action.run(async () => {
+    await nativeWindow.Restore()
+    await refreshWindowSnapshot()
+  })
+}
+
+function toggleAlwaysOnTop() {
+  action.run(async () => {
+    alwaysOnTop.value = !alwaysOnTop.value
+    await nativeWindow.SetAlwaysOnTop(alwaysOnTop.value)
+  })
+}
+
+function zoomIn() {
+  action.run(() => nativeWindow.ZoomIn())
+}
+
+function zoomReset() {
+  action.run(() => nativeWindow.ZoomReset())
 }
 
 function triggerError() {
@@ -243,6 +353,16 @@ onMounted(() => {
               <span class="text-muted-foreground">Accent</span>
               <span class="font-medium">{{ environment?.accentColor ?? '-' }}</span>
             </div>
+            <div class="grid gap-1">
+              <span class="text-muted-foreground">Dark Mode</span>
+              <span class="font-medium">
+                {{ systemDarkMode === null ? '-' : systemDarkMode ? 'yes' : 'no' }}
+              </span>
+            </div>
+            <div class="grid gap-1">
+              <span class="text-muted-foreground">Screens</span>
+              <span class="font-medium">{{ screenCount ?? '-' }}</span>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -270,11 +390,46 @@ onMounted(() => {
             <div class="flex flex-wrap gap-2">
               <Button variant="outline" @click="readClipboard">Read Clipboard</Button>
               <Button variant="outline" @click="showDialog">Show Dialog</Button>
+              <Button variant="outline" @click="askQuestion">Ask Question</Button>
               <Button variant="outline" @click="openRepository">
                 <IconBrandGithub data-icon="inline-start" />
                 Repository
               </Button>
             </div>
+            <FieldDescription v-if="dialogAnswer"
+              >Dialog answer: {{ dialogAnswer }}</FieldDescription
+            >
+          </FieldGroup>
+        </CardContent>
+      </Card>
+
+      <Card class="min-w-0">
+        <CardHeader>
+          <CardTitle>File Dialogs</CardTitle>
+          <CardDescription
+            >Open and save path pickers from the native dialog runtime.</CardDescription
+          >
+        </CardHeader>
+        <CardContent>
+          <FieldGroup>
+            <div class="flex flex-wrap gap-2">
+              <Button variant="outline" @click="openFile">
+                <IconFolderOpen data-icon="inline-start" />
+                Open File
+              </Button>
+              <Button variant="outline" @click="chooseSavePath">
+                <IconFileExport data-icon="inline-start" />
+                Save Path
+              </Button>
+            </div>
+            <Field v-if="selectedPath">
+              <FieldLabel>Selected File</FieldLabel>
+              <Textarea :model-value="selectedPath" readonly class="min-h-16 font-mono text-xs" />
+            </Field>
+            <Field v-if="savePath">
+              <FieldLabel>Save Path</FieldLabel>
+              <Textarea :model-value="savePath" readonly class="min-h-16 font-mono text-xs" />
+            </Field>
           </FieldGroup>
         </CardContent>
       </Card>
@@ -286,11 +441,11 @@ onMounted(() => {
             >Authorization, delivery, and interaction callback wiring.</CardDescription
           >
           <CardAction>
-            <Badge :variant="notificationAuthorization?.allowed ? 'default' : 'secondary'">
+            <Badge :variant="notificationPermission ? 'default' : 'secondary'">
               {{
-                notificationAuthorization === null
+                notificationPermission === null
                   ? 'unknown'
-                  : notificationAuthorization.allowed
+                  : notificationPermission
                     ? 'allowed'
                     : 'blocked'
               }}
@@ -299,16 +454,6 @@ onMounted(() => {
         </CardHeader>
         <CardContent>
           <FieldGroup>
-            <Alert>
-              <IconBell />
-              <AlertTitle>{{ notificationAuthorization?.platform ?? 'desktop' }}</AlertTitle>
-              <AlertDescription>
-                {{
-                  notificationAuthorization?.message ??
-                  'macOS may require a bundled, signed app before system notifications can be delivered.'
-                }}
-              </AlertDescription>
-            </Alert>
             <Field>
               <FieldLabel>Title</FieldLabel>
               <Input v-model="notificationTitle" />
@@ -326,14 +471,15 @@ onMounted(() => {
                 <IconBell data-icon="inline-start" />
                 Request Permission
               </Button>
-              <Button
-                :disabled="notificationAuthorization?.allowed === false"
-                @click="sendNotification"
-              >
+              <Button @click="sendNotification">
                 <IconSend data-icon="inline-start" />
                 Send Notification
               </Button>
             </div>
+            <FieldDescription>
+              On macOS, delivery may require running a bundled app and allowing notifications in
+              System Settings.
+            </FieldDescription>
             <Field v-if="notificationResult">
               <FieldLabel>Last Interaction</FieldLabel>
               <Textarea
@@ -386,6 +532,19 @@ onMounted(() => {
         </CardHeader>
         <CardContent>
           <div class="grid gap-3 text-sm">
+            <div class="flex flex-wrap gap-2">
+              <Button variant="outline" size="sm" @click="centerWindow">Center</Button>
+              <Button variant="outline" size="sm" @click="toggleMaximiseWindow">Maximise</Button>
+              <Button variant="outline" size="sm" @click="restoreWindow">Restore</Button>
+              <Button variant="outline" size="sm" @click="toggleAlwaysOnTop">
+                <IconPin data-icon="inline-start" />
+                {{ alwaysOnTop ? 'Unpin' : 'Pin' }}
+              </Button>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <Button variant="outline" size="sm" @click="zoomIn">Zoom In</Button>
+              <Button variant="outline" size="sm" @click="zoomReset">Reset Zoom</Button>
+            </div>
             <div class="flex justify-between gap-3">
               <span class="text-muted-foreground">Current</span>
               <span class="shrink-0 font-medium">
@@ -404,6 +563,42 @@ onMounted(() => {
             </div>
             <Textarea
               :model-value="JSON.stringify(windowPreference ?? {}, null, 2)"
+              readonly
+              class="min-h-24 font-mono text-xs"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card class="min-w-0">
+        <CardHeader>
+          <CardTitle>System Surface</CardTitle>
+          <CardDescription>Runtime system, screen, and capability snapshots.</CardDescription>
+          <CardAction>
+            <Button variant="ghost" size="icon" @click="refreshSystemSnapshot">
+              <IconDeviceDesktop />
+              <span class="sr-only">Refresh system snapshot</span>
+            </Button>
+          </CardAction>
+        </CardHeader>
+        <CardContent>
+          <div class="grid gap-3 text-sm">
+            <div class="flex justify-between gap-3">
+              <span class="text-muted-foreground">Primary Screen</span>
+              <span class="min-w-0 truncate font-medium">{{ primaryScreen?.name ?? '-' }}</span>
+            </div>
+            <div class="flex justify-between gap-3">
+              <span class="text-muted-foreground">Resolution</span>
+              <span class="shrink-0 font-medium">
+                {{ primaryScreen?.width ?? '-' }} x {{ primaryScreen?.height ?? '-' }}
+              </span>
+            </div>
+            <div class="flex justify-between gap-3">
+              <span class="text-muted-foreground">Scale</span>
+              <Badge variant="secondary">{{ primaryScreen?.scaleFactor ?? '-' }}</Badge>
+            </div>
+            <Textarea
+              :model-value="JSON.stringify(systemCapabilities ?? {}, null, 2)"
               readonly
               class="min-h-24 font-mono text-xs"
             />
