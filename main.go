@@ -3,11 +3,11 @@ package main
 import (
 	"context"
 	"embed"
-
 	"log"
 	"time"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
+	"github.com/wailsapp/wails/v3/pkg/services/notifications"
 )
 
 // Wails uses Go's `embed` package to embed the frontend files into the binary.
@@ -20,6 +20,7 @@ var assets embed.FS
 
 func init() {
 	application.RegisterEvent[AppInfo]("app:ready")
+	application.RegisterEvent[NotificationInteraction]("notification:result")
 	// Register a custom event whose associated data type is string.
 	// This is not required, but the binding generator will pick up registered events
 	// and provide a strongly typed JS/TS API for them.
@@ -58,7 +59,26 @@ func main() {
 		TitlebarHeight:    titlebarHeight,
 	}
 
-	app.RegisterService(application.NewService(NewAppService(app, info)))
+	notificationService := notifications.New()
+	notificationService.OnNotificationResponse(func(result notifications.NotificationResult) {
+		interaction := NotificationInteraction{
+			ID:               result.Response.ID,
+			ActionIdentifier: result.Response.ActionIdentifier,
+			CategoryID:       result.Response.CategoryID,
+			Title:            result.Response.Title,
+			Subtitle:         result.Response.Subtitle,
+			Body:             result.Response.Body,
+			UserText:         result.Response.UserText,
+			UserInfo:         result.Response.UserInfo,
+		}
+		if result.Error != nil {
+			interaction.Error = result.Error.Error()
+		}
+		app.Event.Emit("notification:result", interaction)
+	})
+
+	app.RegisterService(application.NewService(notificationService))
+	app.RegisterService(application.NewService(NewAppService(app, info, notificationService)))
 	app.RegisterService(application.NewService(NewPreferenceService()))
 	app.RegisterService(application.NewService(&GreetService{}))
 

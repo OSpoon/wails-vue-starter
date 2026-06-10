@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { toast } from 'vue-sonner'
 import {
   IconAlertTriangle,
+  IconBell,
   IconBrandGithub,
   IconClipboard,
   IconRefresh,
+  IconSend,
   IconWindow,
 } from '@tabler/icons-vue'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -44,6 +48,24 @@ interface WindowSnapshot {
   maximised: boolean
 }
 
+interface NotificationInteraction {
+  id: string
+  actionIdentifier: string
+  categoryId: string
+  title: string
+  subtitle: string
+  body: string
+  userText: string
+  userInfo: Record<string, unknown>
+  error?: string
+}
+
+interface NotificationAuthorization {
+  allowed: boolean
+  platform: string
+  message: string
+}
+
 const { appInfo, environment, refresh: refreshAppInfo } = useAppInfo()
 const {
   preferences,
@@ -56,6 +78,11 @@ const clipboardText = ref('Wails Vue Starter')
 const clipboardReadback = ref('')
 const eventLog = ref<string[]>([])
 const windowSnapshot = ref<WindowSnapshot | null>(null)
+const notificationAuthorization = ref<NotificationAuthorization | null>(null)
+const notificationTitle = ref('Wails Vue Starter')
+const notificationSubtitle = ref('Foundation check')
+const notificationBody = ref('System notifications are wired through the Wails runtime.')
+const notificationResult = ref<NotificationInteraction | null>(null)
 
 const preferenceValues = computed(() => preferences.value?.values ?? {})
 const themePreference = computed({
@@ -80,8 +107,21 @@ useWailsEvent('app:ready', () => {
   eventLog.value = ['app:ready', ...eventLog.value].slice(0, 5)
 })
 
+useWailsEvent<NotificationInteraction>('notification:result', (event) => {
+  notificationResult.value = event.data
+  eventLog.value = [
+    `notification ${event.data.actionIdentifier || 'result'}`,
+    ...eventLog.value,
+  ].slice(0, 5)
+})
+
 async function refreshAll() {
-  await Promise.all([refreshAppInfo(), refreshPreferences(), refreshWindowSnapshot()])
+  await Promise.all([
+    refreshAppInfo(),
+    refreshPreferences(),
+    refreshWindowSnapshot(),
+    refreshNotificationAuthorization(),
+  ])
 }
 
 async function refreshWindowSnapshot() {
@@ -97,6 +137,10 @@ async function refreshWindowSnapshot() {
     y: position.y,
     maximised,
   }
+}
+
+async function refreshNotificationAuthorization() {
+  notificationAuthorization.value = await AppService.CheckNotificationAuthorization()
 }
 
 function openRepository() {
@@ -125,6 +169,25 @@ function showDialog() {
   )
 }
 
+function requestNotificationAuthorization() {
+  action.run(async () => {
+    notificationAuthorization.value = await AppService.RequestNotificationAuthorization()
+  })
+}
+
+function sendNotification() {
+  action.run(async () => {
+    await AppService.SendSystemNotification({
+      id: '',
+      title: notificationTitle.value,
+      subtitle: notificationSubtitle.value,
+      body: notificationBody.value,
+    })
+    toast.success('Notification sent')
+    await refreshNotificationAuthorization()
+  })
+}
+
 function triggerError() {
   action.run(() => PreferenceService.Set('', 'invalid'), { toastError: true }).catch(() => {})
 }
@@ -151,7 +214,7 @@ onMounted(() => {
       </Button>
     </div>
 
-    <div class="grid gap-4 @5xl/main:grid-cols-[1.1fr_0.9fr]">
+    <div class="grid gap-4 @4xl/main:grid-cols-[repeat(auto-fit,minmax(20rem,1fr))]">
       <Card class="min-w-0">
         <CardHeader>
           <CardTitle>Application Runtime</CardTitle>
@@ -212,6 +275,73 @@ onMounted(() => {
                 Repository
               </Button>
             </div>
+          </FieldGroup>
+        </CardContent>
+      </Card>
+
+      <Card class="min-w-0">
+        <CardHeader>
+          <CardTitle>System Notifications</CardTitle>
+          <CardDescription
+            >Authorization, delivery, and interaction callback wiring.</CardDescription
+          >
+          <CardAction>
+            <Badge :variant="notificationAuthorization?.allowed ? 'default' : 'secondary'">
+              {{
+                notificationAuthorization === null
+                  ? 'unknown'
+                  : notificationAuthorization.allowed
+                    ? 'allowed'
+                    : 'blocked'
+              }}
+            </Badge>
+          </CardAction>
+        </CardHeader>
+        <CardContent>
+          <FieldGroup>
+            <Alert>
+              <IconBell />
+              <AlertTitle>{{ notificationAuthorization?.platform ?? 'desktop' }}</AlertTitle>
+              <AlertDescription>
+                {{
+                  notificationAuthorization?.message ??
+                  'macOS may require a bundled, signed app before system notifications can be delivered.'
+                }}
+              </AlertDescription>
+            </Alert>
+            <Field>
+              <FieldLabel>Title</FieldLabel>
+              <Input v-model="notificationTitle" />
+            </Field>
+            <Field>
+              <FieldLabel>Subtitle</FieldLabel>
+              <Input v-model="notificationSubtitle" />
+            </Field>
+            <Field>
+              <FieldLabel>Body</FieldLabel>
+              <Textarea v-model="notificationBody" class="min-h-20" />
+            </Field>
+            <div class="flex flex-wrap gap-2">
+              <Button variant="outline" @click="requestNotificationAuthorization">
+                <IconBell data-icon="inline-start" />
+                Request Permission
+              </Button>
+              <Button
+                :disabled="notificationAuthorization?.allowed === false"
+                @click="sendNotification"
+              >
+                <IconSend data-icon="inline-start" />
+                Send Notification
+              </Button>
+            </div>
+            <Field v-if="notificationResult">
+              <FieldLabel>Last Interaction</FieldLabel>
+              <Textarea
+                :model-value="JSON.stringify(notificationResult, null, 2)"
+                readonly
+                class="min-h-24 font-mono text-xs"
+              />
+            </Field>
           </FieldGroup>
         </CardContent>
       </Card>
