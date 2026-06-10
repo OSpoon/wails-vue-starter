@@ -10,7 +10,6 @@ import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
     :style="{
       '--sidebar-width': 'calc(var(--spacing) * 72)',
       '--header-height': 'calc(var(--spacing) * 12)',
-      '--wails-titlebar-height': '50px',
     }"
   >
     <SiteHeader />

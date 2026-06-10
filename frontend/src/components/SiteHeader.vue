@@ -11,11 +11,16 @@ import { cn } from '@/lib/utils'
 const route = useRoute()
 
 const pageTitle = computed(() => {
-  const name = route.name
-  if (typeof name === 'string') {
-    return name.charAt(0).toUpperCase() + name.slice(1)
-  }
-  return 'Home'
+  return (
+    route.meta?.title ??
+    (() => {
+      const name = route.name
+      if (typeof name === 'string') {
+        return name.charAt(0).toUpperCase() + name.slice(1)
+      }
+      return 'Home'
+    })()
+  )
 })
 
 const isWindowFocused = ref(true)
@@ -89,16 +94,14 @@ onBeforeUnmount(() => {
     <div
       :class="
         cn(
-          'flex w-full items-center gap-1 pr-4 lg:gap-2 lg:pr-6',
-          isWindowFullscreen
-            ? 'pl-4'
-            : 'pl-(--wails-titlebar-drag-width) translate-y-0.5',
+          'flex min-w-0 w-full items-center gap-1 pr-4 lg:gap-2 lg:pr-6',
+          isWindowFullscreen ? 'pl-4' : 'pl-(--wails-titlebar-drag-width) translate-y-0.5',
         )
       "
     >
       <SidebarTrigger class="-ml-1 [--wails-draggable:no-drag]" />
       <Separator orientation="vertical" class="mx-2 data-[orientation=vertical]:h-4" />
-      <h1 class="cursor-default text-base font-medium">{{ pageTitle }}</h1>
+      <h1 class="min-w-0 truncate cursor-default text-base font-medium">{{ pageTitle }}</h1>
       <div class="ml-auto flex items-center gap-2 [--wails-draggable:no-drag]">
         <button
           @click="Browser.OpenURL('https://github.com/OSpoon/wails-vue-starter')"

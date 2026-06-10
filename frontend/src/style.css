@@ -58,7 +58,8 @@
 }
 
 :root {
-  --wails-titlebar-height: 0px;
+  --wails-titlebar-height: 50px;
+  --wails-titlebar-drag-width: 98px;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -144,8 +145,6 @@
   }
 
   #app {
-    --wails-titlebar-height: 50px;
-    --wails-titlebar-drag-width: 98px;
     min-height: 100vh;
     width: 100%;
   }

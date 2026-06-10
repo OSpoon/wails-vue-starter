@@ -1,21 +1,5 @@
 <script setup lang="ts">
-import {
-  IconCamera,
-  IconChartBar,
-  IconDashboard,
-  IconDatabase,
-  IconFileAi,
-  IconFileDescription,
-  IconFolder,
-  IconHelp,
-  IconHome2,
-  IconInnerShadowTop,
-  IconListDetails,
-  IconReport,
-  IconSearch,
-  IconSettings,
-  IconUsers,
-} from '@tabler/icons-vue'
+import { IconInnerShadowTop } from '@tabler/icons-vue'
 
 import NavDocuments from '@/components/NavDocuments.vue'
 import NavMain from '@/components/NavMain.vue'
@@ -30,128 +14,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
+import { useNavigation } from '@/composables/useNavigation'
 
-const data = {
-  user: {
-    name: 'OSpoon',
-    email: 'ospoon@example.com',
-    avatar: '/avatars/shadcn.jpg',
-  },
-  navMain: [
-    {
-      title: 'Welcome',
-      url: '/',
-      icon: IconHome2,
-    },
-    {
-      title: 'Dashboard',
-      url: '/dashboard',
-      icon: IconDashboard,
-    },
-    {
-      title: 'Lifecycle',
-      url: '#',
-      icon: IconListDetails,
-    },
-    {
-      title: 'Analytics',
-      url: '#',
-      icon: IconChartBar,
-    },
-    {
-      title: 'Projects',
-      url: '#',
-      icon: IconFolder,
-    },
-    {
-      title: 'Team',
-      url: '#',
-      icon: IconUsers,
-    },
-  ],
-  navClouds: [
-    {
-      title: 'Capture',
-      icon: IconCamera,
-      isActive: true,
-      url: '#',
-      items: [
-        {
-          title: 'Active Proposals',
-          url: '#',
-        },
-        {
-          title: 'Archived',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'Proposal',
-      icon: IconFileDescription,
-      url: '#',
-      items: [
-        {
-          title: 'Active Proposals',
-          url: '#',
-        },
-        {
-          title: 'Archived',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'Prompts',
-      icon: IconFileAi,
-      url: '#',
-      items: [
-        {
-          title: 'Active Proposals',
-          url: '#',
-        },
-        {
-          title: 'Archived',
-          url: '#',
-        },
-      ],
-    },
-  ],
-  navSecondary: [
-    {
-      title: 'Settings',
-      url: '#',
-      icon: IconSettings,
-    },
-    {
-      title: 'Get Help',
-      url: '#',
-      icon: IconHelp,
-    },
-    {
-      title: 'Search',
-      url: '#',
-      icon: IconSearch,
-    },
-  ],
-  documents: [
-    {
-      name: 'Data Library',
-      url: '#',
-      icon: IconDatabase,
-    },
-    {
-      name: 'Reports',
-      url: '#',
-      icon: IconReport,
-    },
-    {
-      name: 'Word Assistant',
-      url: '#',
-      icon: IconFileDescription,
-    },
-  ],
-}
+const data = useNavigation()
 </script>
 
 <template>
@@ -159,10 +24,10 @@ const data = {
     <SidebarHeader>
       <SidebarMenu>
         <SidebarMenuItem>
-          <SidebarMenuButton as-child class="data-[slot=sidebar-menu-button]:!p-1.5">
-            <a href="#">
+          <SidebarMenuButton as-child class="min-w-0 data-[slot=sidebar-menu-button]:!p-1.5">
+            <a href="#" class="min-w-0">
               <IconInnerShadowTop class="!size-5" />
-              <span class="text-base font-semibold">Wails Vue Starter</span>
+              <span class="truncate text-base font-semibold">Wails Vue Starter</span>
             </a>
           </SidebarMenuButton>
         </SidebarMenuItem>
