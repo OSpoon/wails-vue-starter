@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { IconInnerShadowTop } from '@tabler/icons-vue'
+import { useI18n } from 'vue-i18n'
 
 import NavDocuments from '@/components/NavDocuments.vue'
 import NavMain from '@/components/NavMain.vue'
@@ -17,6 +18,7 @@ import {
 import { useNavigation } from '@/composables/useNavigation'
 
 const data = useNavigation()
+const { t } = useI18n()
 </script>
 
 <template>
@@ -27,7 +29,7 @@ const data = useNavigation()
           <SidebarMenuButton as-child class="min-w-0 data-[slot=sidebar-menu-button]:!p-1.5">
             <a href="#" class="min-w-0">
               <IconInnerShadowTop class="!size-5" />
-              <span class="truncate text-base font-semibold">Wails Vue Starter</span>
+              <span class="truncate text-base font-semibold">{{ t('app.name') }}</span>
             </a>
           </SidebarMenuButton>
         </SidebarMenuItem>

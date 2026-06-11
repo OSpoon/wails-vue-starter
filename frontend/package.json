@@ -49,6 +49,7 @@
     "vaul-vue": "^0.4.1",
     "vee-validate": "^4.15.1",
     "vue": "^3.5.32",
+    "vue-i18n": "^11.4.5",
     "vue-input-otp": "^0.3.2",
     "vue-router": "^5.1.0",
     "vue-sonner": "^2.0.9",

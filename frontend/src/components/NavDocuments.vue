@@ -3,6 +3,7 @@ import type { Component } from 'vue'
 import { useRoute } from 'vue-router'
 
 import { IconDots, IconFolder, IconShare3, IconTrash } from '@tabler/icons-vue'
+import { useI18n } from 'vue-i18n'
 
 import {
   DropdownMenu,
@@ -32,12 +33,13 @@ defineProps<{
 }>()
 
 const route = useRoute()
+const { t } = useI18n()
 const { isMobile } = useSidebar()
 </script>
 
 <template>
   <SidebarGroup class="group-data-[collapsible=icon]:hidden">
-    <SidebarGroupLabel>Documents</SidebarGroupLabel>
+    <SidebarGroupLabel>{{ t('nav.documents') }}</SidebarGroupLabel>
     <SidebarMenu>
       <SidebarMenuItem v-for="item in items" :key="item.name">
         <SidebarMenuButton as-child :is-active="route.path === item.url">
@@ -50,7 +52,7 @@ const { isMobile } = useSidebar()
           <DropdownMenuTrigger as-child>
             <SidebarMenuAction show-on-hover class="data-[state=open]:bg-accent rounded-sm">
               <IconDots />
-              <span class="sr-only">More</span>
+              <span class="sr-only">{{ t('nav.more') }}</span>
             </SidebarMenuAction>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -60,16 +62,16 @@ const { isMobile } = useSidebar()
           >
             <DropdownMenuItem>
               <IconFolder />
-              <span>Open</span>
+              <span>{{ t('nav.open') }}</span>
             </DropdownMenuItem>
             <DropdownMenuItem>
               <IconShare3 />
-              <span>Share</span>
+              <span>{{ t('nav.share') }}</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem variant="destructive">
               <IconTrash />
-              <span>Delete</span>
+              <span>{{ t('nav.delete') }}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -77,7 +79,7 @@ const { isMobile } = useSidebar()
       <SidebarMenuItem>
         <SidebarMenuButton class="text-sidebar-foreground/70">
           <IconDots class="text-sidebar-foreground/70" />
-          <span>More</span>
+          <span>{{ t('nav.more') }}</span>
         </SidebarMenuButton>
       </SidebarMenuItem>
     </SidebarMenu>

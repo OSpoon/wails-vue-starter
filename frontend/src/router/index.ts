@@ -6,6 +6,7 @@ import type { Component } from 'vue'
 declare module 'vue-router' {
   interface RouteMeta {
     title?: string
+    titleKey?: string
     icon?: Component
     nav?: string
   }
@@ -15,19 +16,34 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'welcome',
-    meta: { title: 'Welcome', icon: IconHome2, nav: 'main' } satisfies RouteMeta,
+    meta: {
+      title: 'Welcome',
+      titleKey: 'nav.welcome',
+      icon: IconHome2,
+      nav: 'main',
+    } satisfies RouteMeta,
     component: () => import('@/pages/WelcomePage.vue'),
   },
   {
     path: '/dashboard',
     name: 'dashboard',
-    meta: { title: 'Dashboard', icon: IconDashboard, nav: 'main' } satisfies RouteMeta,
+    meta: {
+      title: 'Dashboard',
+      titleKey: 'nav.dashboard',
+      icon: IconDashboard,
+      nav: 'main',
+    } satisfies RouteMeta,
     component: () => import('@/pages/DashboardPage.vue'),
   },
   {
     path: '/foundation',
     name: 'foundation',
-    meta: { title: 'Foundation', icon: IconStack2, nav: 'main' } satisfies RouteMeta,
+    meta: {
+      title: 'Foundation',
+      titleKey: 'nav.foundation',
+      icon: IconStack2,
+      nav: 'main',
+    } satisfies RouteMeta,
     component: () => import('@/pages/FoundationPage.vue'),
   },
 ]

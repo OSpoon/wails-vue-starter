@@ -5,14 +5,15 @@ import { Card, CardContent } from '@/components/ui/card'
 
 import { ref, onMounted } from 'vue'
 import { Events } from '@wailsio/runtime'
+import { useI18n } from 'vue-i18n'
 import { GreetService } from '../../bindings/github.com/OSpoon/wails-vue-starter'
 import { Input } from '@/components/ui/input'
 
-
+const { t } = useI18n()
 
 const name = ref('')
-const result = ref('Please enter your name below 👇')
-const time = ref('Listening for Time event...')
+const result = ref(t('welcome.emptyName'))
+const time = ref(t('welcome.listeningTime'))
 
 const doGreet = () => {
   const localName = name.value || 'anonymous'
@@ -41,25 +42,24 @@ onMounted(() => {
             <img
               src="/wails.png"
               class="h-20 p-4 [will-change:filter] [box-sizing:content-box] hover:drop-shadow-[0_0_2em_#e80000aa]"
-              alt="Wails logo"
+              :alt="t('welcome.wailsLogo')"
             />
           </a>
           <a data-wml-openURL="https://vuejs.org/">
             <img
               src="/vue.svg"
               class="h-20 p-4 [will-change:filter] [box-sizing:content-box] hover:drop-shadow-[0_0_2em_#42b883aa]"
-              alt="Vue logo"
+              :alt="t('welcome.vueLogo')"
             />
           </a>
         </div>
         <div class="flex flex-col items-center gap-2 text-center">
           <Badge variant="outline" class="rounded-full px-3 py-0.5 text-xs font-normal">
-            Wails3 + Vue 3 + TypeScript
+            {{ t('welcome.stack') }}
           </Badge>
-          <h1 class="text-3xl font-bold tracking-tight md:text-4xl">Welcome to Wails Vue Starter</h1>
+          <h1 class="text-3xl font-bold tracking-tight md:text-4xl">{{ t('welcome.title') }}</h1>
           <p class="text-muted-foreground max-w-md text-sm">
-            A modern desktop application built with Wails3, Vue 3, TypeScript, and shadcn-vue
-            components.
+            {{ t('welcome.description') }}
           </p>
         </div>
       </div>
@@ -70,12 +70,14 @@ onMounted(() => {
           <div class="card">
             <div class="flex items-center gap-3">
               <Input aria-label="input" v-model="name" type="text" autocomplete="off" />
-              <Button aria-label="greet-btn" @click="doGreet">Greet</Button>
+              <Button aria-label="greet-btn" @click="doGreet">{{ t('welcome.greet') }}</Button>
             </div>
           </div>
 
           <div class="mt-4 content-center text-center">
-            <div><p>Click on the Wails logo to learn more</p></div>
+            <div>
+              <p>{{ t('welcome.learnMore') }}</p>
+            </div>
             <div>
               <p>{{ time }}</p>
             </div>

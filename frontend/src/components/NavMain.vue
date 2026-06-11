@@ -2,6 +2,7 @@
 import type { Component } from 'vue'
 import { useRoute } from 'vue-router'
 import { IconCirclePlusFilled, IconMail } from '@tabler/icons-vue'
+import { useI18n } from 'vue-i18n'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -19,6 +20,7 @@ interface NavItem {
 }
 
 const route = useRoute()
+const { t } = useI18n()
 
 defineProps<{
   items: NavItem[]
@@ -31,11 +33,11 @@ defineProps<{
       <SidebarMenu>
         <SidebarMenuItem class="flex min-w-0 items-center gap-2">
           <SidebarMenuButton
-            tooltip="Quick Create"
+            :tooltip="t('nav.quickCreate')"
             class="bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90 hover:text-sidebar-primary-foreground active:bg-sidebar-primary/90 active:text-sidebar-primary-foreground min-w-0 flex-1 duration-200 ease-linear"
           >
             <IconCirclePlusFilled />
-            <span>Quick Create</span>
+            <span>{{ t('nav.quickCreate') }}</span>
           </SidebarMenuButton>
           <Button
             size="icon"
@@ -43,7 +45,7 @@ defineProps<{
             variant="outline"
           >
             <IconMail />
-            <span class="sr-only">Inbox</span>
+            <span class="sr-only">{{ t('nav.inbox') }}</span>
           </Button>
         </SidebarMenuItem>
       </SidebarMenu>

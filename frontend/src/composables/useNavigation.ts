@@ -1,6 +1,7 @@
 import { useRouter } from 'vue-router'
 import type { Component } from 'vue'
 import { IconCamera, IconDatabase, IconSettings } from '@tabler/icons-vue'
+import { useI18n } from 'vue-i18n'
 
 interface NavItem {
   title: string
@@ -24,12 +25,13 @@ interface User {
 
 export function useNavigation() {
   const router = useRouter()
+  const { t } = useI18n()
 
   const navMain = router
     .getRoutes()
     .filter((r) => r.meta?.nav === 'main')
     .map((r) => ({
-      title: (r.meta?.title as string) ?? '',
+      title: r.meta?.titleKey ? t(r.meta.titleKey) : ((r.meta?.title as string) ?? ''),
       url: r.path,
       icon: r.meta?.icon as Component | undefined,
     }))
@@ -53,7 +55,7 @@ export function useNavigation() {
         ],
       },
     ] satisfies NavGroup[],
-    navSecondary: [{ title: 'Settings', url: '#', icon: IconSettings }] satisfies NavItem[],
-    documents: [{ name: 'Data Library', url: '#', icon: IconDatabase }],
+    navSecondary: [{ title: t('nav.settings'), url: '#', icon: IconSettings }] satisfies NavItem[],
+    documents: [{ name: t('nav.dataLibrary'), url: '#', icon: IconDatabase }],
   }
 }

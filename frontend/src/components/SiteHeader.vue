@@ -2,13 +2,19 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { Browser } from '@wailsio/runtime'
+import { useI18n } from 'vue-i18n'
 
 import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 
 const route = useRoute()
+const { t } = useI18n()
 
 const pageTitle = computed(() => {
+  if (route.meta?.titleKey) {
+    return t(route.meta.titleKey)
+  }
+
   return (
     route.meta?.title ??
     (() => {
@@ -16,7 +22,7 @@ const pageTitle = computed(() => {
       if (typeof name === 'string') {
         return name.charAt(0).toUpperCase() + name.slice(1)
       }
-      return 'Home'
+      return t('nav.home')
     })()
   )
 })
@@ -35,7 +41,7 @@ const pageTitle = computed(() => {
           @click="Browser.OpenURL('https://github.com/OSpoon/wails-vue-starter')"
           class="inline-flex h-8 items-center justify-center gap-2 whitespace-nowrap rounded-md px-3 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground hidden sm:flex dark:text-foreground"
         >
-          GitHub
+          {{ t('nav.github') }}
         </button>
       </div>
     </div>
