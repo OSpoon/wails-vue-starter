@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import type { RouteRecordRaw, RouteMeta } from 'vue-router'
-import { IconDashboard, IconHome2, IconStack2 } from '@tabler/icons-vue'
+import { IconChartArea, IconHome2, IconPlugConnected } from '@tabler/icons-vue'
 import type { Component } from 'vue'
 
 declare module 'vue-router' {
@@ -15,33 +15,33 @@ declare module 'vue-router' {
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    name: 'welcome',
+    name: 'overview',
     meta: {
-      title: 'Welcome',
-      titleKey: 'nav.welcome',
+      title: 'Overview',
+      titleKey: 'nav.overview',
       icon: IconHome2,
       nav: 'main',
     } satisfies RouteMeta,
     component: () => import('@/pages/WelcomePage.vue'),
   },
   {
-    path: '/dashboard',
-    name: 'dashboard',
+    path: '/data-ui',
+    name: 'data-ui',
     meta: {
-      title: 'Dashboard',
-      titleKey: 'nav.dashboard',
-      icon: IconDashboard,
+      title: 'Data UI',
+      titleKey: 'nav.dataUi',
+      icon: IconChartArea,
       nav: 'main',
     } satisfies RouteMeta,
     component: () => import('@/pages/DashboardPage.vue'),
   },
   {
-    path: '/foundation',
-    name: 'foundation',
+    path: '/native-runtime',
+    name: 'native-runtime',
     meta: {
-      title: 'Foundation',
-      titleKey: 'nav.foundation',
-      icon: IconStack2,
+      title: 'Native Runtime',
+      titleKey: 'nav.nativeRuntime',
+      icon: IconPlugConnected,
       nav: 'main',
     } satisfies RouteMeta,
     component: () => import('@/pages/FoundationPage.vue'),

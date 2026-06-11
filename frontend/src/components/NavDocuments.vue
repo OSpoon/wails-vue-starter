@@ -1,31 +1,22 @@
 <script setup lang="ts">
 import type { Component } from 'vue'
 import { useRoute } from 'vue-router'
-
-import { IconDots, IconFolder, IconShare3, IconTrash } from '@tabler/icons-vue'
+import { Browser } from '@wailsio/runtime'
 import { useI18n } from 'vue-i18n'
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from '@/components/ui/sidebar'
 
 interface Document {
   name: string
   url: string
   icon?: Component
+  external?: boolean
 }
 
 defineProps<{
@@ -34,52 +25,24 @@ defineProps<{
 
 const route = useRoute()
 const { t } = useI18n()
-const { isMobile } = useSidebar()
 </script>
 
 <template>
   <SidebarGroup class="group-data-[collapsible=icon]:hidden">
-    <SidebarGroupLabel>{{ t('nav.documents') }}</SidebarGroupLabel>
+    <SidebarGroupLabel>{{ t('nav.resources') }}</SidebarGroupLabel>
     <SidebarMenu>
       <SidebarMenuItem v-for="item in items" :key="item.name">
-        <SidebarMenuButton as-child :is-active="route.path === item.url">
+        <SidebarMenuButton v-if="item.external" as-child>
+          <a href="#" @click.prevent="Browser.OpenURL(item.url)">
+            <component :is="item.icon" />
+            <span>{{ item.name }}</span>
+          </a>
+        </SidebarMenuButton>
+        <SidebarMenuButton v-else as-child :is-active="route.path === item.url">
           <router-link :to="item.url">
             <component :is="item.icon" />
             <span>{{ item.name }}</span>
           </router-link>
-        </SidebarMenuButton>
-        <DropdownMenu>
-          <DropdownMenuTrigger as-child>
-            <SidebarMenuAction show-on-hover class="data-[state=open]:bg-accent rounded-sm">
-              <IconDots />
-              <span class="sr-only">{{ t('nav.more') }}</span>
-            </SidebarMenuAction>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            class="w-24 rounded-lg"
-            :side="isMobile ? 'bottom' : 'right'"
-            :align="isMobile ? 'end' : 'start'"
-          >
-            <DropdownMenuItem>
-              <IconFolder />
-              <span>{{ t('nav.open') }}</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <IconShare3 />
-              <span>{{ t('nav.share') }}</span>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive">
-              <IconTrash />
-              <span>{{ t('nav.delete') }}</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </SidebarMenuItem>
-      <SidebarMenuItem>
-        <SidebarMenuButton class="text-sidebar-foreground/70">
-          <IconDots class="text-sidebar-foreground/70" />
-          <span>{{ t('nav.more') }}</span>
         </SidebarMenuButton>
       </SidebarMenuItem>
     </SidebarMenu>

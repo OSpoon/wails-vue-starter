@@ -164,6 +164,7 @@ func (s *PreferenceService) load() error {
 func defaultPreferences() map[string]any {
 	return map[string]any{
 		"theme":   "system",
+		"locale":  "system",
 		"sidebar": true,
 	}
 }

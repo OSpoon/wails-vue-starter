@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { IconTrendingDown, IconTrendingUp } from '@tabler/icons-vue'
+import { IconTrendingUp } from '@tabler/icons-vue'
 
 import { Badge } from '@/components/ui/badge'
 import {
@@ -18,82 +18,82 @@ import {
   >
     <Card class="@container/card">
       <CardHeader>
-        <CardDescription>Total Revenue</CardDescription>
+        <CardDescription>Go Services</CardDescription>
         <CardTitle class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-          $1,250.00
+          3
         </CardTitle>
         <CardAction>
           <Badge variant="outline">
             <IconTrendingUp />
-            +12.5%
+            typed
           </Badge>
         </CardAction>
       </CardHeader>
       <CardFooter class="flex-col items-start gap-1.5 text-sm">
         <div class="line-clamp-1 flex gap-2 font-medium">
-          Trending up this month <IconTrendingUp class="size-4" />
+          Bound into Vue <IconTrendingUp class="size-4" />
         </div>
-        <div class="text-muted-foreground">Visitors for the last 6 months</div>
+        <div class="text-muted-foreground">Generated TypeScript bindings</div>
       </CardFooter>
     </Card>
     <Card class="@container/card">
       <CardHeader>
-        <CardDescription>New Customers</CardDescription>
+        <CardDescription>Runtime APIs</CardDescription>
         <CardTitle class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-          1,234
-        </CardTitle>
-        <CardAction>
-          <Badge variant="outline">
-            <IconTrendingDown />
-            -20%
-          </Badge>
-        </CardAction>
-      </CardHeader>
-      <CardFooter class="flex-col items-start gap-1.5 text-sm">
-        <div class="line-clamp-1 flex gap-2 font-medium">
-          Down 20% this period <IconTrendingDown class="size-4" />
-        </div>
-        <div class="text-muted-foreground">Acquisition needs attention</div>
-      </CardFooter>
-    </Card>
-    <Card class="@container/card">
-      <CardHeader>
-        <CardDescription>Active Accounts</CardDescription>
-        <CardTitle class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-          45,678
+          8+
         </CardTitle>
         <CardAction>
           <Badge variant="outline">
             <IconTrendingUp />
-            +12.5%
+            native
           </Badge>
         </CardAction>
       </CardHeader>
       <CardFooter class="flex-col items-start gap-1.5 text-sm">
         <div class="line-clamp-1 flex gap-2 font-medium">
-          Strong user retention <IconTrendingUp class="size-4" />
+          Desktop surface covered <IconTrendingUp class="size-4" />
         </div>
-        <div class="text-muted-foreground">Engagement exceed targets</div>
+        <div class="text-muted-foreground">Window, dialogs, clipboard, system</div>
       </CardFooter>
     </Card>
     <Card class="@container/card">
       <CardHeader>
-        <CardDescription>Growth Rate</CardDescription>
+        <CardDescription>Theme Sync</CardDescription>
         <CardTitle class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-          4.5%
+          Auto
         </CardTitle>
         <CardAction>
           <Badge variant="outline">
             <IconTrendingUp />
-            +4.5%
+            live
           </Badge>
         </CardAction>
       </CardHeader>
       <CardFooter class="flex-col items-start gap-1.5 text-sm">
         <div class="line-clamp-1 flex gap-2 font-medium">
-          Steady performance increase <IconTrendingUp class="size-4" />
+          Follows system changes <IconTrendingUp class="size-4" />
         </div>
-        <div class="text-muted-foreground">Meets growth projections</div>
+        <div class="text-muted-foreground">Light, dark, and preference state</div>
+      </CardFooter>
+    </Card>
+    <Card class="@container/card">
+      <CardHeader>
+        <CardDescription>Internationalization</CardDescription>
+        <CardTitle class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
+          EN / 中文
+        </CardTitle>
+        <CardAction>
+          <Badge variant="outline">
+            <IconTrendingUp />
+            i18n
+          </Badge>
+        </CardAction>
+      </CardHeader>
+      <CardFooter class="flex-col items-start gap-1.5 text-sm">
+        <div class="line-clamp-1 flex gap-2 font-medium">
+          Switches without reload <IconTrendingUp class="size-4" />
+        </div>
+        <div class="text-muted-foreground">Persisted locale preference</div>
       </CardFooter>
     </Card>
   </div>

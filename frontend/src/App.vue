@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import AppSidebar from '@/components/AppSidebar.vue'
 import SiteHeader from '@/components/SiteHeader.vue'
+import { useLocalePreference } from '@/composables/useLocalePreference'
 import { usePersistedWindowState } from '@/composables/usePersistedWindowState'
 import { useSystemTheme } from '@/composables/useSystemTheme'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { Toaster } from '@/components/ui/sonner'
 
+useLocalePreference()
 useSystemTheme()
 usePersistedWindowState()
 </script>

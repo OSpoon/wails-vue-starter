@@ -1,19 +1,16 @@
 <script setup lang="ts">
-import {
-  IconCreditCard,
-  IconDotsVertical,
-  IconLogout,
-  IconNotification,
-  IconUserCircle,
-} from '@tabler/icons-vue'
+import { onMounted, ref } from 'vue'
+import { IconDotsVertical, IconLanguage, IconLogout } from '@tabler/icons-vue'
+import { useI18n } from 'vue-i18n'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
@@ -23,6 +20,13 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
+import {
+  getLocalePreference,
+  isLocalePreference,
+  setLocalePreference,
+  type LocalePreference,
+} from '@/i18n'
+import { PreferenceService } from '../../bindings/github.com/OSpoon/wails-vue-starter'
 
 interface User {
   name: string
@@ -35,6 +39,29 @@ defineProps<{
 }>()
 
 const { isMobile } = useSidebar()
+const { t } = useI18n()
+const localePreference = ref<LocalePreference>(getLocalePreference())
+
+function updateLocalePreference(value: unknown) {
+  if (!isLocalePreference(value)) {
+    return
+  }
+
+  localePreference.value = value
+  setLocalePreference(value)
+  PreferenceService.Set('locale', value).catch(console.error)
+}
+
+onMounted(() => {
+  PreferenceService.Get('locale')
+    .then(([value, ok]) => {
+      if (ok && isLocalePreference(value)) {
+        localePreference.value = value
+        setLocalePreference(value)
+      }
+    })
+    .catch(console.error)
+})
 </script>
 
 <template>
@@ -80,24 +107,28 @@ const { isMobile } = useSidebar()
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <IconUserCircle />
-              Account
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <IconCreditCard />
-              Billing
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <IconNotification />
-              Notifications
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
+          <DropdownMenuLabel class="flex items-center gap-2">
+            <IconLanguage />
+            {{ t('locale.label') }}
+          </DropdownMenuLabel>
+          <DropdownMenuRadioGroup
+            :model-value="localePreference"
+            @update:model-value="updateLocalePreference"
+          >
+            <DropdownMenuRadioItem value="system">
+              {{ t('locale.system') }}
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="en">
+              {{ t('locale.en') }}
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="zh">
+              {{ t('locale.zh') }}
+            </DropdownMenuRadioItem>
+          </DropdownMenuRadioGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
             <IconLogout />
-            Log out
+            {{ t('nav.logout') }}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

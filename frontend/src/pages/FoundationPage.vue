@@ -4,16 +4,25 @@ import { toast } from 'vue-sonner'
 import {
   IconAlertTriangle,
   IconBell,
+  IconBolt,
   IconBrandGithub,
+  IconBrowser,
   IconClipboard,
+  IconCode,
   IconDeviceDesktop,
+  IconDragDrop,
   IconFileExport,
   IconFolderOpen,
+  IconKeyboard,
+  IconMenu2,
   IconPin,
   IconRefresh,
+  IconRocket,
   IconSend,
+  IconSettingsAutomation,
   IconWindow,
 } from '@tabler/icons-vue'
+import type { Component } from 'vue'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -77,6 +86,13 @@ interface ScreenSummary {
   scaleFactor: number
 }
 
+interface CapabilityItem {
+  title: string
+  description: string
+  status: 'live' | 'planned'
+  icon: Component
+}
+
 const { appInfo, environment, refresh: refreshAppInfo } = useAppInfo()
 const {
   preferences,
@@ -94,7 +110,7 @@ const eventLog = ref<string[]>([])
 const windowSnapshot = ref<WindowSnapshot | null>(null)
 const notificationPermission = ref<boolean | null>(null)
 const notificationTitle = ref('Wails Vue Starter')
-const notificationSubtitle = ref('Foundation check')
+const notificationSubtitle = ref('Runtime check')
 const notificationBody = ref('System notifications are wired through the Wails runtime.')
 const notificationResult = ref<NotificationInteraction | null>(null)
 const alwaysOnTop = ref(false)
@@ -102,6 +118,89 @@ const systemDarkMode = ref<boolean | null>(null)
 const screenCount = ref<number | null>(null)
 const primaryScreen = ref<ScreenSummary | null>(null)
 const systemCapabilities = ref<Record<string, unknown> | null>(null)
+
+const capabilityItems: CapabilityItem[] = [
+  {
+    title: 'Window Management',
+    description: 'Size, position, maximise, restore, zoom, always-on-top.',
+    status: 'live',
+    icon: IconWindow,
+  },
+  {
+    title: 'Go Services & Bindings',
+    description: 'Type-safe Go methods exposed to Vue through generated bindings.',
+    status: 'live',
+    icon: IconCode,
+  },
+  {
+    title: 'Events',
+    description:
+      'Go-to-frontend runtime events for time ticks, readiness, and notification results.',
+    status: 'live',
+    icon: IconBolt,
+  },
+  {
+    title: 'Dialogs',
+    description: 'Native message, question, open-file, and save-file dialogs.',
+    status: 'live',
+    icon: IconFolderOpen,
+  },
+  {
+    title: 'Clipboard',
+    description: 'Read and write text with the platform clipboard.',
+    status: 'live',
+    icon: IconClipboard,
+  },
+  {
+    title: 'Browser Integration',
+    description: 'Open external URLs using the operating system default browser.',
+    status: 'live',
+    icon: IconBrowser,
+  },
+  {
+    title: 'Notifications',
+    description:
+      'Request permission, send system notifications, and receive interaction callbacks.',
+    status: 'live',
+    icon: IconBell,
+  },
+  {
+    title: 'Screens & Environment',
+    description: 'Inspect displays, scale factor, dark mode, accent colour, OS, and architecture.',
+    status: 'live',
+    icon: IconDeviceDesktop,
+  },
+  {
+    title: 'Menus & System Tray',
+    description: 'Application menus, context menus, and tray menus provided by Wails3.',
+    status: 'planned',
+    icon: IconMenu2,
+  },
+  {
+    title: 'Keyboard Shortcuts',
+    description: 'Register global and app-level shortcuts for desktop workflows.',
+    status: 'planned',
+    icon: IconKeyboard,
+  },
+  {
+    title: 'Drag & Drop',
+    description: 'Handle file drops and HTML drag-and-drop interactions.',
+    status: 'planned',
+    icon: IconDragDrop,
+  },
+  {
+    title: 'Autostart & Dock/Taskbar',
+    description: 'Startup behaviour plus platform-specific Dock and taskbar integration.',
+    status: 'planned',
+    icon: IconSettingsAutomation,
+  },
+  {
+    title: 'Packaging & Distribution',
+    description: 'Cross-platform builds, signing, packaging, file associations, and update flows.',
+    status: 'planned',
+    icon: IconRocket,
+  },
+]
 
 const preferenceValues = computed(() => preferences.value?.values ?? {})
 const themePreference = computed({
@@ -314,15 +413,32 @@ onMounted(() => {
   <div class="@container/main flex flex-1 flex-col gap-4 p-4 md:gap-6 md:p-6">
     <div class="flex flex-wrap items-start justify-between gap-3">
       <div class="min-w-0 grid gap-1">
-        <h1 class="truncate text-2xl font-semibold">Foundation</h1>
+        <h1 class="truncate text-2xl font-semibold">Native Runtime</h1>
         <p class="text-muted-foreground text-sm">
-          Runtime services and native desktop capabilities exposed by the starter.
+          Wails3 runtime services and native desktop capabilities exposed by the starter.
         </p>
       </div>
       <Button variant="outline" size="sm" @click="refreshAll">
         <IconRefresh data-icon="inline-start" />
         Refresh
       </Button>
+    </div>
+
+    <div class="grid gap-4 @3xl/main:grid-cols-2 @6xl/main:grid-cols-3">
+      <Card v-for="capability in capabilityItems" :key="capability.title" class="min-w-0">
+        <CardHeader>
+          <CardTitle class="flex min-w-0 items-center gap-2 text-base">
+            <component :is="capability.icon" />
+            <span class="truncate">{{ capability.title }}</span>
+          </CardTitle>
+          <CardAction>
+            <Badge :variant="capability.status === 'live' ? 'default' : 'secondary'">
+              {{ capability.status === 'live' ? 'Live' : 'Planned' }}
+            </Badge>
+          </CardAction>
+          <CardDescription>{{ capability.description }}</CardDescription>
+        </CardHeader>
+      </Card>
     </div>
 
     <div class="grid gap-4 @4xl/main:grid-cols-[repeat(auto-fit,minmax(20rem,1fr))]">

@@ -36,9 +36,9 @@ const { t } = useI18n()
       </SidebarMenu>
     </SidebarHeader>
     <SidebarContent>
-      <NavMain :items="data.navMain" />
-      <NavDocuments :items="data.documents" />
-      <NavSecondary :items="data.navSecondary" class="mt-auto" />
+      <NavMain :items="data.navMain.value" />
+      <NavDocuments :items="data.resources.value" />
+      <NavSecondary :items="data.navSecondary.value" class="mt-auto" />
     </SidebarContent>
     <SidebarFooter>
       <NavUser :user="data.user" />
