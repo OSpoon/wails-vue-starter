@@ -33,6 +33,7 @@ import {
   FieldDescription,
   FieldGroup,
   FieldLabel,
+  FieldLegend,
   FieldSet,
   FieldTitle,
 } from '@/components/ui/field'

@@ -47,7 +47,7 @@ const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
         <SheetTitle>Sidebar</SheetTitle>
         <SheetDescription>Displays the mobile sidebar.</SheetDescription>
       </SheetHeader>
-      <div class="flex h-full w-full flex-col pt-(--wails-titlebar-height)">
+      <div class="flex h-full w-full flex-col">
         <slot />
       </div>
     </SheetContent>
@@ -78,7 +78,7 @@ const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
     <div
       :class="
         cn(
-          'fixed top-(--wails-titlebar-height) bottom-0 z-10 hidden w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex',
+          'fixed inset-y-0 z-10 hidden w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex',
           side === 'left'
             ? 'left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]'
             : 'right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]',
