@@ -7,7 +7,6 @@ import {
   IconBrandGithub,
   IconComponents,
   IconFileCode,
-  IconSettings,
 } from '@tabler/icons-vue'
 import { useI18n } from 'vue-i18n'
 
@@ -54,9 +53,6 @@ export function useNavigation() {
       })),
   )
 
-  const navSecondary = computed(
-    () => [{ title: t('nav.settings'), url: '#', icon: IconSettings }] satisfies NavItem[],
-  )
   const resources = computed(
     () =>
       [
@@ -107,7 +103,6 @@ export function useNavigation() {
         ],
       },
     ] satisfies NavGroup[],
-    navSecondary,
     resources,
   }
 }

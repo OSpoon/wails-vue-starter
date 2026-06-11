@@ -4,7 +4,6 @@ import { useI18n } from 'vue-i18n'
 
 import NavDocuments from '@/components/NavDocuments.vue'
 import NavMain from '@/components/NavMain.vue'
-import NavSecondary from '@/components/NavSecondary.vue'
 import NavUser from '@/components/NavUser.vue'
 import {
   Sidebar,
@@ -38,7 +37,6 @@ const { t } = useI18n()
     <SidebarContent>
       <NavMain :items="data.navMain.value" />
       <NavDocuments :items="data.resources.value" />
-      <NavSecondary :items="data.navSecondary.value" class="mt-auto" />
     </SidebarContent>
     <SidebarFooter>
       <NavUser :user="data.user" />
