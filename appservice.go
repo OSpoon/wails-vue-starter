@@ -131,6 +131,10 @@ func (s *AppService) SendSystemNotification(request NotificationRequest) error {
 	})
 }
 
+func (s *AppService) CheckForUpdates() error {
+	return s.app.Updater.CheckAndInstall(context.Background())
+}
+
 func (s *AppService) Now() string {
 	return time.Now().Format(time.RFC1123)
 }

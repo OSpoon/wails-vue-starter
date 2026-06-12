@@ -8,6 +8,8 @@ import (
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 	"github.com/wailsapp/wails/v3/pkg/services/notifications"
+	"github.com/wailsapp/wails/v3/pkg/updater"
+	"github.com/wailsapp/wails/v3/pkg/updater/providers/github"
 )
 
 // Wails uses Go's `embed` package to embed the frontend files into the binary.
@@ -83,6 +85,21 @@ func main() {
 	app.RegisterService(application.NewService(&GreetService{}))
 	app.RegisterService(application.NewService(NewQRSerice()))
 
+	githubUpdater, err := github.New(github.Config{
+		Repository:    appRepository,
+		ChecksumAsset: "SHA256SUMS",
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if err := app.Updater.Init(updater.Config{
+		CurrentVersion: appVersion,
+		Providers:      []updater.Provider{githubUpdater},
+	}); err != nil {
+		log.Fatal(err)
+	}
+
 	// Create a new window with the necessary options.
 	// 'Title' is the title of the window.
 	// 'BackgroundColour' is the background colour of the window.
@@ -109,7 +126,7 @@ func main() {
 	}(app.Context())
 
 	// Run the application. This blocks until the application has been exited.
-	err := app.Run()
+	err = app.Run()
 
 	// If an error occurred while running the application, log it and exit.
 	if err != nil {

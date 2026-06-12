@@ -33,3 +33,27 @@ wails3 build
 ```
 
 Production binaries are written to `bin/`.
+
+## Release
+
+Versioning is driven by `bumpp` from `frontend/package.json`. The bumpp config also updates the
+Wails metadata in `appconfig.go` and `build/config.yml`.
+
+```sh
+cd frontend
+pnpm release
+```
+
+The release command creates a `chore(release): vX.Y.Z` commit, creates a `vX.Y.Z` tag, and pushes
+both. Pushing the tag triggers `.github/workflows/release.yml`.
+
+The release workflow builds native artifacts on GitHub-hosted runners:
+
+- `wails-vue-starter-darwin-arm64.zip`
+- `wails-vue-starter-darwin-amd64.zip`
+- `wails-vue-starter-linux-amd64.tar.gz`
+- `wails-vue-starter-windows-amd64.zip`
+- `SHA256SUMS`
+
+The artifact names include `GOOS` and `GOARCH` so the Wails3 GitHub updater provider can match the
+right download. `SHA256SUMS` is published alongside the artifacts for updater checksum verification.

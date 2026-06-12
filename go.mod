@@ -2,7 +2,9 @@ module github.com/OSpoon/wails-vue-starter
 
 go 1.25.0
 
-require github.com/wailsapp/wails/v3 v3.0.0-alpha.98
+require github.com/wailsapp/wails/v3 v3.0.0-alpha.98-tui
+
+require golang.org/x/mod v0.35.0 // indirect
 
 require (
 	dario.cat/mergo v1.0.2 // indirect

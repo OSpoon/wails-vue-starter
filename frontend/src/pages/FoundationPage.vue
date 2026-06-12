@@ -10,6 +10,7 @@ import {
   IconClipboard,
   IconCode,
   IconDeviceDesktop,
+  IconDownload,
   IconDragDrop,
   IconFileExport,
   IconFolderOpen,
@@ -163,6 +164,12 @@ const capabilityItems: CapabilityItem[] = [
       'Request permission, send system notifications, and receive interaction callbacks.',
     status: 'live',
     icon: IconBell,
+  },
+  {
+    title: 'In-App Updater',
+    description: 'Check GitHub Releases, verify SHA256SUMS, stage updates, and restart safely.',
+    status: 'live',
+    icon: IconDownload,
   },
   {
     title: 'Screens & Environment',
@@ -360,6 +367,10 @@ function sendNotification() {
     toast.success('Notification sent')
     await refreshNotificationAuthorization()
   })
+}
+
+function checkForUpdates() {
+  action.run(() => AppService.CheckForUpdates(), { toastError: true })
 }
 
 function centerWindow() {
@@ -605,6 +616,33 @@ onMounted(() => {
                 class="min-h-24 font-mono text-xs"
               />
             </Field>
+          </FieldGroup>
+        </CardContent>
+      </Card>
+
+      <Card class="min-w-0">
+        <CardHeader>
+          <CardTitle>In-App Updater</CardTitle>
+          <CardDescription>
+            GitHub Releases provider with SHA256SUMS verification for released artifacts.
+          </CardDescription>
+          <CardAction>
+            <Badge variant="outline">GitHub</Badge>
+          </CardAction>
+        </CardHeader>
+        <CardContent>
+          <FieldGroup>
+            <Field>
+              <FieldLabel>Current Version</FieldLabel>
+              <Input :model-value="appInfo?.version ?? '-'" readonly />
+              <FieldDescription>
+                Release artifacts are selected by platform and architecture from GitHub Releases.
+              </FieldDescription>
+            </Field>
+            <Button class="w-fit max-w-full" @click="checkForUpdates">
+              <IconDownload data-icon="inline-start" />
+              Check for Updates
+            </Button>
           </FieldGroup>
         </CardContent>
       </Card>
