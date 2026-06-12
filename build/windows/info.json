@@ -1,10 +1,10 @@
 {
 	"fixed": {
-		"file_version": "0.0.2"
+		"file_version": "0.0.3"
 	},
 	"info": {
 		"0000": {
-			"ProductVersion": "0.0.2",
+			"ProductVersion": "0.0.3",
 			"CompanyName": "OSpoon",
 			"FileDescription": "A Wails3 + Vue 3 + TypeScript starter template",
 			"LegalCopyright": "(c) 2025, OSpoon",
