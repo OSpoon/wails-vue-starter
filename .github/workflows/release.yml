@@ -70,7 +70,16 @@ jobs:
       - name: Install Windows packaging dependencies
         if: matrix.goos == 'windows'
         shell: pwsh
-        run: choco install nsis -y --no-progress
+        run: |
+          choco install nsis -y --no-progress
+          $nsisPath = "${env:ProgramFiles(x86)}\NSIS"
+          if (!(Test-Path "$nsisPath\makensis.exe")) {
+            $nsisPath = "${env:ProgramFiles}\NSIS"
+          }
+          if (!(Test-Path "$nsisPath\makensis.exe")) {
+            throw "makensis.exe was not found after installing NSIS"
+          }
+          $nsisPath | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
       - name: Install Task
         shell: bash
@@ -125,6 +134,7 @@ jobs:
         if: matrix.goos == 'windows'
         shell: pwsh
         run: |
+          Get-Command makensis
           New-Item -ItemType Directory -Force -Path dist | Out-Null
           Compress-Archive -Path bin/wails-vue-starter.exe -DestinationPath "dist/${{ matrix.artifact }}" -Force
           wails3 task windows:package ARCH=${{ matrix.goarch }} INSTALL_SCOPE=user
