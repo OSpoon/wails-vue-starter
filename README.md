@@ -55,8 +55,9 @@ The release workflow builds updater artifacts on GitHub-hosted runners:
 - `wails-vue-starter-windows-amd64.zip`
 - `SHA256SUMS`
 
-The artifact names include `GOOS` and `GOARCH` so the Wails3 GitHub updater provider can match the
-right download. `SHA256SUMS` is published alongside the artifacts for updater checksum verification.
+The artifact names include `GOOS` and `GOARCH`. The release workflow also publishes static appcast
+feeds such as `appcast-darwin-arm64.xml`, so the desktop updater can check for updates without
+calling the GitHub Releases API and hitting unauthenticated API rate limits.
 
 The same release also publishes user-facing installers/packages:
 

@@ -3,13 +3,16 @@ package main
 import (
 	"context"
 	"embed"
+	"fmt"
 	"log"
+	"net/http"
+	"runtime"
 	"time"
 
 	"github.com/wailsapp/wails/v3/pkg/application"
 	"github.com/wailsapp/wails/v3/pkg/services/notifications"
 	"github.com/wailsapp/wails/v3/pkg/updater"
-	"github.com/wailsapp/wails/v3/pkg/updater/providers/github"
+	"github.com/wailsapp/wails/v3/pkg/updater/providers/appcast"
 )
 
 // Wails uses Go's `embed` package to embed the frontend files into the binary.
@@ -85,9 +88,11 @@ func main() {
 	app.RegisterService(application.NewService(&GreetService{}))
 	app.RegisterService(application.NewService(NewQRSerice()))
 
-	githubUpdater, err := github.New(github.Config{
-		Repository:    appRepository,
-		ChecksumAsset: "SHA256SUMS",
+	appcastUpdater, err := appcast.New(appcast.Config{
+		URL: updateFeedURL(),
+		HTTPClient: &http.Client{
+			Timeout: 5 * time.Minute,
+		},
 	})
 	if err != nil {
 		log.Fatal(err)
@@ -95,7 +100,14 @@ func main() {
 
 	if err := app.Updater.Init(updater.Config{
 		CurrentVersion: appVersion,
-		Providers:      []updater.Provider{githubUpdater},
+		Providers:      []updater.Provider{appcastUpdater},
+		Window: &updater.BuiltinWindow{
+			Options: updater.WindowOptions{
+				Width:         520,
+				Height:        360,
+				DisableResize: true,
+			},
+		},
 	}); err != nil {
 		log.Fatal(err)
 	}
@@ -132,4 +144,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func updateFeedURL() string {
+	return fmt.Sprintf(
+		"https://github.com/%s/releases/latest/download/appcast-%s-%s.xml",
+		appRepository,
+		runtime.GOOS,
+		runtime.GOARCH,
+	)
 }

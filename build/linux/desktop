@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.0
 Name=Wails Vue Starter
-Comment=A wails-vue-starter application
+Comment=A Wails3 + Vue 3 + TypeScript starter template
 # The Exec line includes %u to pass the URL to the application
 Exec=/usr/local/bin/wails-vue-starter %u
 Terminal=false
