@@ -47,7 +47,7 @@ pnpm release
 The release command creates a `chore(release): vX.Y.Z` commit, creates a `vX.Y.Z` tag, and pushes
 both. Pushing the tag triggers `.github/workflows/release.yml`.
 
-The release workflow builds native artifacts on GitHub-hosted runners:
+The release workflow builds updater artifacts on GitHub-hosted runners:
 
 - `wails-vue-starter-darwin-arm64.zip`
 - `wails-vue-starter-darwin-amd64.zip`
@@ -57,3 +57,10 @@ The release workflow builds native artifacts on GitHub-hosted runners:
 
 The artifact names include `GOOS` and `GOARCH` so the Wails3 GitHub updater provider can match the
 right download. `SHA256SUMS` is published alongside the artifacts for updater checksum verification.
+
+The same release also publishes user-facing installers/packages:
+
+- `wails-vue-starter-darwin-arm64.dmg`
+- `wails-vue-starter-darwin-amd64.dmg`
+- `wails-vue-starter-windows-amd64-installer.exe`
+- Linux `.AppImage`, `.deb`, and `.rpm` packages

@@ -65,7 +65,12 @@ jobs:
         if: matrix.goos == 'linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential pkg-config libgtk-4-dev libwebkitgtk-6.0-dev
+          sudo apt-get install -y build-essential file pkg-config rpm wget libgtk-4-dev libwebkitgtk-6.0-dev
+
+      - name: Install Windows packaging dependencies
+        if: matrix.goos == 'windows'
+        shell: pwsh
+        run: choco install nsis -y --no-progress
 
       - name: Install Task
         shell: bash
@@ -98,6 +103,12 @@ jobs:
         run: |
           mkdir -p dist
           ditto -c -k --sequesterRsrc --keepParent "bin/wails-vue-starter.app" "dist/${{ matrix.artifact }}"
+          hdiutil create \
+            -volname "Wails Vue Starter" \
+            -srcfolder "bin/wails-vue-starter.app" \
+            -ov \
+            -format UDZO \
+            "dist/wails-vue-starter-darwin-${{ matrix.goarch }}.dmg"
 
       - name: Package Linux artifact
         if: matrix.goos == 'linux'
@@ -105,6 +116,10 @@ jobs:
         run: |
           mkdir -p dist
           tar -czf "dist/${{ matrix.artifact }}" -C bin wails-vue-starter
+          wails3 task linux:create:appimage ARCH=${{ matrix.goarch }}
+          wails3 task linux:create:deb ARCH=${{ matrix.goarch }}
+          wails3 task linux:create:rpm ARCH=${{ matrix.goarch }}
+          find bin -maxdepth 1 -type f \( -name '*.AppImage' -o -name '*.deb' -o -name '*.rpm' \) -exec cp {} dist/ \;
 
       - name: Package Windows artifact
         if: matrix.goos == 'windows'
@@ -112,12 +127,14 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force -Path dist | Out-Null
           Compress-Archive -Path bin/wails-vue-starter.exe -DestinationPath "dist/${{ matrix.artifact }}" -Force
+          wails3 task windows:package ARCH=${{ matrix.goarch }} INSTALL_SCOPE=user
+          Copy-Item "bin/wails-vue-starter-${{ matrix.goarch }}-installer.exe" "dist/wails-vue-starter-windows-${{ matrix.goarch }}-installer.exe"
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.1
         with:
-          name: ${{ matrix.artifact }}
-          path: dist/${{ matrix.artifact }}
+          name: ${{ matrix.goos }}-${{ matrix.goarch }}-artifacts
+          path: dist/*
           if-no-files-found: error
 
   publish:
@@ -126,7 +143,7 @@ jobs:
     needs: build
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8.0.1
         with:
           path: release-assets
           merge-multiple: true
@@ -137,7 +154,7 @@ jobs:
           sha256sum * > SHA256SUMS
 
       - name: Publish release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3.0.0
         with:
           files: release-assets/*
           generate_release_notes: true
