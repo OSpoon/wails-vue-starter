@@ -16,8 +16,8 @@ usePersistedWindowState()
   <SidebarProvider
     class="min-h-svh"
     :style="{
-      '--sidebar-width': 'calc(var(--spacing) * 72)',
-      '--header-height': 'calc(var(--spacing) * 12)',
+      '--sidebar-width': '260px',
+      '--header-height': '48px',
     }"
   >
     <AppSidebar variant="inset" />

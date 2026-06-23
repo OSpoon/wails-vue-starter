@@ -28,9 +28,13 @@ defineProps<{
     <SidebarGroupContent>
       <SidebarMenu>
         <SidebarMenuItem v-for="item in items" :key="item.title">
-          <SidebarMenuButton as-child :is-active="route.path === item.url">
+          <SidebarMenuButton
+            as-child
+            :is-active="route.path === item.url"
+            class="text-sm tracking-apple"
+          >
             <router-link :to="item.url">
-              <component :is="item.icon" v-if="item.icon" />
+              <component :is="item.icon" v-if="item.icon" class="size-4" />
               {{ item.title }}
             </router-link>
           </SidebarMenuButton>

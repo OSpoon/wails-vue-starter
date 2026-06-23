@@ -78,12 +78,12 @@ onMounted(() => {
               <AvatarFallback class="rounded-lg"> CN </AvatarFallback>
             </Avatar>
             <div class="grid min-w-0 flex-1 text-left text-sm leading-tight">
-              <span class="truncate font-medium">{{ user.name }}</span>
-              <span class="text-muted-foreground truncate text-xs">
+              <span class="truncate font-medium tracking-apple">{{ user.name }}</span>
+              <span class="text-meta truncate text-xs">
                 {{ user.email }}
               </span>
             </div>
-            <IconDotsVertical class="ml-auto size-4" />
+            <IconDotsVertical class="ml-auto size-3.5 text-muted-foreground" />
           </SidebarMenuButton>
         </DropdownMenuTrigger>
         <DropdownMenuContent
@@ -99,8 +99,8 @@ onMounted(() => {
                 <AvatarFallback class="rounded-lg"> CN </AvatarFallback>
               </Avatar>
               <div class="grid min-w-0 flex-1 text-left text-sm leading-tight">
-                <span class="truncate font-medium">{{ user.name }}</span>
-                <span class="text-muted-foreground truncate text-xs">
+                <span class="truncate font-medium tracking-apple">{{ user.name }}</span>
+                <span class="text-meta truncate text-xs">
                   {{ user.email }}
                 </span>
               </div>

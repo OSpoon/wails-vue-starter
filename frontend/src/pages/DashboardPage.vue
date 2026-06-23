@@ -116,16 +116,16 @@ const data = [
 </script>
 
 <template>
-  <div class="@container/main flex flex-1 flex-col gap-2">
-    <div class="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-      <div class="grid gap-1 px-4 lg:px-6">
-        <h1 class="text-2xl font-semibold tracking-tight">Data UI</h1>
-        <p class="text-muted-foreground text-sm">
+  <div class="@container/main flex flex-1 flex-col">
+    <div class="flex flex-col gap-6 py-5 md:py-6">
+      <div class="grid gap-1 px-5 lg:px-6">
+        <h1 class="text-xl font-semibold tracking-tight md:text-2xl">Data UI</h1>
+        <p class="text-muted-foreground text-xs md:text-sm">
           Charts, cards, and tables using Wails-flavoured sample data.
         </p>
       </div>
       <SectionCards />
-      <div class="px-4 lg:px-6">
+      <div class="px-5 lg:px-6">
         <ChartAreaInteractive />
       </div>
       <DataTable :data="data" />

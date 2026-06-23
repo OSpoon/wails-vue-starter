@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 
 import { ref, onMounted } from 'vue'
 import { Events } from '@wailsio/runtime'
@@ -34,56 +33,73 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="@container/main flex flex-1 flex-col gap-2">
-    <div class="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-      <div class="flex flex-col items-center gap-6 px-4 lg:px-6">
-        <div class="flex justify-center gap-6">
-          <a data-wml-openURL="https://wails.io">
-            <img
-              src="/wails.png"
-              class="h-20 p-4 [will-change:filter] [box-sizing:content-box] hover:drop-shadow-[0_0_2em_#e80000aa]"
-              :alt="t('welcome.wailsLogo')"
-            />
-          </a>
-          <a data-wml-openURL="https://vuejs.org/">
-            <img
-              src="/vue.svg"
-              class="h-20 p-4 [will-change:filter] [box-sizing:content-box] hover:drop-shadow-[0_0_2em_#42b883aa]"
-              :alt="t('welcome.vueLogo')"
-            />
-          </a>
-        </div>
-        <div class="flex flex-col items-center gap-2 text-center">
-          <Badge variant="outline" class="rounded-full px-3 py-0.5 text-xs font-normal">
-            {{ t('welcome.stack') }}
-          </Badge>
-          <h1 class="text-3xl font-bold tracking-tight md:text-4xl">{{ t('welcome.title') }}</h1>
-          <p class="text-muted-foreground max-w-md text-sm">
-            {{ t('welcome.description') }}
-          </p>
-        </div>
+  <div class="@container/main flex flex-1 flex-col">
+    <div class="flex flex-col items-center justify-center gap-8 px-6 py-12 md:py-16 lg:px-8">
+      <div class="flex justify-center gap-8">
+        <a data-wml-openURL="https://wails.io" class="transition-all duration-300 hover:scale-105">
+          <img
+            src="/wails.png"
+            class="h-16 md:h-20 opacity-80 hover:opacity-100"
+            :alt="t('welcome.wailsLogo')"
+          />
+        </a>
+        <a
+          data-wml-openURL="https://vuejs.org/"
+          class="transition-all duration-300 hover:scale-105"
+        >
+          <img
+            src="/vue.svg"
+            class="h-16 md:h-20 opacity-80 hover:opacity-100"
+            :alt="t('welcome.vueLogo')"
+          />
+        </a>
       </div>
 
-      <Card class="mx-4 lg:mx-6">
-        <CardContent>
-          <div aria-label="result" class="h-5 leading-5 my-6 mx-auto text-center">{{ result }}</div>
-          <div class="card">
-            <div class="flex items-center gap-3">
-              <Input aria-label="input" v-model="name" type="text" autocomplete="off" />
-              <Button aria-label="greet-btn" @click="doGreet">{{ t('welcome.greet') }}</Button>
-            </div>
-          </div>
+      <div class="flex flex-col items-center gap-3 text-center max-w-lg">
+        <Badge
+          variant="outline"
+          class="rounded-full px-3 py-0.5 text-xs font-normal text-muted-foreground border-border"
+        >
+          <span class="tracking-wider uppercase text-[10px]">{{ t('welcome.stack') }}</span>
+        </Badge>
+        <h1 class="text-3xl font-semibold tracking-tight md:text-4xl lg:text-5xl leading-tight">
+          {{ t('welcome.title') }}
+        </h1>
+        <p class="text-muted-foreground text-sm leading-relaxed max-w-md">
+          {{ t('welcome.description') }}
+        </p>
+      </div>
 
-          <div class="mt-4 content-center text-center">
-            <div>
-              <p>{{ t('welcome.learnMore') }}</p>
+      <div class="w-full max-w-md mx-auto px-0">
+        <div class="rounded-xl border border-border/60 bg-card overflow-hidden">
+          <div class="p-5">
+            <div class="text-center mb-4 min-h-6">
+              <p class="text-sm font-medium text-foreground/80">{{ result }}</p>
             </div>
-            <div>
-              <p>{{ time }}</p>
+            <div class="flex items-center gap-2.5">
+              <Input
+                aria-label="input"
+                v-model="name"
+                type="text"
+                autocomplete="off"
+                placeholder="Enter your name"
+                class="h-9 text-sm"
+              />
+              <Button
+                aria-label="greet-btn"
+                @click="doGreet"
+                class="h-9 px-4 text-sm font-medium shrink-0"
+              >
+                {{ t('welcome.greet') }}
+              </Button>
             </div>
           </div>
-        </CardContent>
-      </Card>
+          <div class="border-t border-border/40 px-5 py-3 flex items-center justify-between">
+            <p class="text-xs text-muted-foreground/70">{{ t('welcome.learnMore') }}</p>
+            <p class="text-xs font-mono text-muted-foreground/60 tabular-nums">{{ time }}</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>

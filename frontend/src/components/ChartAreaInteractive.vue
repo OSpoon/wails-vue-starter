@@ -117,43 +117,24 @@ const chartData = [
 type Data = (typeof chartData)[number]
 
 const chartConfig = {
-  // visitors: {
-  //   label: 'Visitors',
-  // },
   mobile: {
     label: 'Mobile',
-    color: 'var(--primary)',
+    color: 'var(--chart-2)',
   },
   desktop: {
     label: 'Desktop',
-    color: 'var(--primary)',
+    color: 'var(--chart-1)',
   },
 } satisfies ChartConfig
 
 const svgDefs = `
   <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
-    <stop
-      offset="5%"
-      stop-color="var(--color-desktop)"
-      stop-opacity="0.8"
-    />
-    <stop
-      offset="95%"
-      stop-color="var(--color-desktop)"
-      stop-opacity="0.1"
-    />
+    <stop offset="0%" stop-color="var(--color-desktop)" stop-opacity="0.25" />
+    <stop offset="100%" stop-color="var(--color-desktop)" stop-opacity="0.02" />
   </linearGradient>
   <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
-    <stop
-      offset="5%"
-      stop-color="var(--color-mobile)"
-      stop-opacity="0.8"
-    />
-    <stop
-      offset="95%"
-      stop-color="var(--color-mobile)"
-      stop-opacity="0.1"
-    />
+    <stop offset="0%" stop-color="var(--color-mobile)" stop-opacity="0.2" />
+    <stop offset="100%" stop-color="var(--color-mobile)" stop-opacity="0.01" />
   </linearGradient>
 `
 
@@ -176,28 +157,32 @@ const filterRange = computed(() => {
 </script>
 
 <template>
-  <Card class="pt-0">
-    <CardHeader class="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
-      <div class="grid flex-1 gap-1">
-        <CardTitle>Area Chart - Interactive</CardTitle>
-        <CardDescription> Showing total visitors for the last 3 months </CardDescription>
+  <Card class="border border-border/50 shadow-none overflow-hidden">
+    <CardHeader
+      class="flex items-center gap-2 space-y-0 border-b border-border/40 py-4 sm:flex-row"
+    >
+      <div class="grid flex-1 gap-0.5">
+        <CardTitle class="text-sm font-semibold tracking-tight">Area Chart — Interactive</CardTitle>
+        <CardDescription class="text-xs text-muted-foreground/70"
+          >Total visitors for the last 3 months</CardDescription
+        >
       </div>
       <Select v-model="timeRange">
         <SelectTrigger
-          class="hidden w-[160px] rounded-lg sm:ml-auto sm:flex"
+          class="hidden w-[140px] rounded-lg sm:ml-auto sm:flex h-8 text-xs"
           aria-label="Select a value"
         >
           <SelectValue placeholder="Last 3 months" />
         </SelectTrigger>
         <SelectContent class="rounded-xl">
-          <SelectItem value="90d" class="rounded-lg"> Last 3 months </SelectItem>
-          <SelectItem value="30d" class="rounded-lg"> Last 30 days </SelectItem>
-          <SelectItem value="7d" class="rounded-lg"> Last 7 days </SelectItem>
+          <SelectItem value="90d" class="rounded-lg text-xs"> Last 3 months </SelectItem>
+          <SelectItem value="30d" class="rounded-lg text-xs"> Last 30 days </SelectItem>
+          <SelectItem value="7d" class="rounded-lg text-xs"> Last 7 days </SelectItem>
         </SelectContent>
       </Select>
     </CardHeader>
-    <CardContent class="px-2 pt-4 sm:px-6 sm:pt-6 pb-4">
-      <ChartContainer :config="chartConfig" class="aspect-auto h-[250px] w-full" :cursor="false">
+    <CardContent class="px-3 pt-4 pb-3 sm:px-4">
+      <ChartContainer :config="chartConfig" class="aspect-auto h-[220px] w-full" :cursor="false">
         <VisXYContainer
           :data="filterRange"
           :svg-defs="svgDefs"
@@ -208,7 +193,7 @@ const filterRange = computed(() => {
             :x="(d: Data) => d.date"
             :y="[(d: Data) => d.mobile, (d: Data) => d.desktop]"
             :color="(d: Data, i: number) => ['url(#fillMobile)', 'url(#fillDesktop)'][i]"
-            :opacity="0.6"
+            :opacity="1"
           />
           <VisLine
             :x="(d: Data) => d.date"
@@ -216,7 +201,7 @@ const filterRange = computed(() => {
             :color="
               (d: Data, i: number) => [chartConfig.mobile.color, chartConfig.desktop.color][i]
             "
-            :line-width="1"
+            :line-width="1.5"
           />
           <VisAxis
             type="x"
@@ -254,7 +239,7 @@ const filterRange = computed(() => {
           />
         </VisXYContainer>
 
-        <ChartLegendContent />
+        <ChartLegendContent class="mt-2" />
       </ChartContainer>
     </CardContent>
   </Card>

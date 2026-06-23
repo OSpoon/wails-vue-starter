@@ -324,23 +324,25 @@ const table = useVueTable({
       <TabsList
         class="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex"
       >
-        <TabsTrigger value="outline"> Outline </TabsTrigger>
-        <TabsTrigger value="past-performance">
-          Past Performance <Badge variant="secondary"> 3 </Badge>
+        <TabsTrigger value="outline" class="tracking-apple text-xs"> Outline </TabsTrigger>
+        <TabsTrigger value="past-performance" class="tracking-apple text-xs">
+          Past Performance <Badge variant="secondary" class="rounded-full"> 3 </Badge>
         </TabsTrigger>
-        <TabsTrigger value="key-personnel">
-          Key Personnel <Badge variant="secondary"> 2 </Badge>
+        <TabsTrigger value="key-personnel" class="tracking-apple text-xs">
+          Key Personnel <Badge variant="secondary" class="rounded-full"> 2 </Badge>
         </TabsTrigger>
-        <TabsTrigger value="focus-documents"> Focus Documents </TabsTrigger>
+        <TabsTrigger value="focus-documents" class="tracking-apple text-xs">
+          Focus Documents
+        </TabsTrigger>
       </TabsList>
       <div class="flex items-center gap-2">
         <DropdownMenu>
           <DropdownMenuTrigger as-child>
-            <Button variant="outline" size="sm">
-              <IconLayoutColumns />
+            <Button variant="outline" size="sm" class="rounded-full text-xs">
+              <IconLayoutColumns class="size-3.5" />
               <span class="hidden lg:inline">Customize Columns</span>
               <span class="lg:hidden">Columns</span>
-              <IconChevronDown />
+              <IconChevronDown class="size-3" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" class="w-56">
@@ -353,7 +355,7 @@ const table = useVueTable({
               :key="column.id"
             >
               <DropdownMenuCheckboxItem
-                class="capitalize"
+                class="capitalize text-sm"
                 :model-value="column.getIsVisible()"
                 @update:model-value="
                   (value) => {
@@ -366,22 +368,23 @@ const table = useVueTable({
             </template>
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button variant="outline" size="sm">
-          <IconPlus />
+        <Button variant="outline" size="sm" class="rounded-full text-xs">
+          <IconPlus class="size-3.5" />
           <span class="hidden lg:inline">Add Section</span>
         </Button>
       </div>
     </div>
     <TabsContent value="outline" class="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
-      <div class="overflow-hidden rounded-lg border">
+      <div class="overflow-hidden rounded-xl border border-border/80">
         <DragDropProvider :modifiers="[RestrictToVerticalAxis as any]">
           <Table>
-            <TableHeader class="bg-muted sticky top-0 z-10">
+            <TableHeader class="bg-surface sticky top-0 z-10">
               <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
                 <TableHead
                   v-for="header in headerGroup.headers"
                   :key="header.id"
                   :col-span="header.colSpan"
+                  class="text-meta text-[11px] font-semibold uppercase tracking-wider"
                 >
                   <FlexRender
                     v-if="!header.isPlaceholder"
@@ -418,13 +421,13 @@ const table = useVueTable({
         <!-- </DndContext> -->
       </div>
       <div class="flex items-center justify-between px-4">
-        <div class="text-muted-foreground hidden flex-1 text-sm lg:flex">
+        <div class="text-meta hidden flex-1 text-xs lg:flex">
           {{ table.getFilteredSelectedRowModel().rows.length }} of
           {{ table.getFilteredRowModel().rows.length }} row(s) selected.
         </div>
-        <div class="flex w-full items-center gap-8 lg:w-fit">
+        <div class="flex w-full items-center gap-6 lg:w-fit">
           <div class="hidden items-center gap-2 lg:flex">
-            <Label for="rows-per-page" class="text-sm font-medium"> Rows per page </Label>
+            <Label for="rows-per-page" class="text-meta text-xs"> Rows per page </Label>
             <Select
               :model-value="table.getState().pagination.pageSize"
               @update:model-value="
@@ -447,49 +450,50 @@ const table = useVueTable({
               </SelectContent>
             </Select>
           </div>
-          <div class="flex w-fit items-center justify-center text-sm font-medium">
+          <div class="flex w-fit items-center justify-center text-meta text-xs tabular-nums">
             Page {{ table.getState().pagination.pageIndex + 1 }} of
             {{ table.getPageCount() }}
           </div>
-          <div class="ml-auto flex items-center gap-2 lg:ml-0">
+          <div class="ml-auto flex items-center gap-1 lg:ml-0">
             <Button
               variant="outline"
-              class="hidden h-8 w-8 p-0 lg:flex"
+              class="hidden size-7 p-0 lg:flex"
+              size="icon"
               :disabled="!table.getCanPreviousPage()"
               @click="table.setPageIndex(0)"
             >
               <span class="sr-only">Go to first page</span>
-              <IconChevronsLeft />
+              <IconChevronsLeft class="size-3.5" />
             </Button>
             <Button
               variant="outline"
-              class="size-8"
+              class="size-7"
               size="icon"
               :disabled="!table.getCanPreviousPage()"
               @click="table.previousPage()"
             >
               <span class="sr-only">Go to previous page</span>
-              <IconChevronLeft />
+              <IconChevronLeft class="size-3.5" />
             </Button>
             <Button
               variant="outline"
-              class="size-8"
+              class="size-7"
               size="icon"
               :disabled="!table.getCanNextPage()"
               @click="table.nextPage()"
             >
               <span class="sr-only">Go to next page</span>
-              <IconChevronRight />
+              <IconChevronRight class="size-3.5" />
             </Button>
             <Button
               variant="outline"
-              class="hidden size-8 lg:flex"
+              class="hidden size-7 lg:flex"
               size="icon"
               :disabled="!table.getCanNextPage()"
               @click="table.setPageIndex(table.getPageCount() - 1)"
             >
               <span class="sr-only">Go to last page</span>
-              <IconChevronsRight />
+              <IconChevronsRight class="size-3.5" />
             </Button>
           </div>
         </div>
